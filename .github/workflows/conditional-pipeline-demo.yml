@@ -1,0 +1,46 @@
+name: CI/CD Pipeline with Conditional Logic
+
+# Specify the events that trigger this workflow
+on:
+  push: # Run the workflow when changes are pushed to specific branches
+    branches:
+      - main          # Trigger on pushes to the main branch
+      - feature/*     # Trigger on pushes to branches starting with 'feature/'
+  pull_request: # Run the workflow when a pull request targets the main branch
+    branches:
+      - main
+
+jobs:
+  continuous-integration: # Define the first job for building and testing the code
+    runs-on: ubuntu-latest # Use the latest Ubuntu environment for the job
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3 # Use the GitHub-provided action to fetch the code
+
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v3 # Use the official Node.js setup action
+        with:
+          node-version: '16' # Specify the Node.js version to use
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: npm install # Install the required npm packages from package.json
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test # Execute the test scripts defined in package.json
+
+  continuous-deployment: # Changed name from 'deploy' to 'deploy-job' to avoid potential conflicts
+    needs: continuous-integration # This job depends on the successful completion of the 'continuous-integration' job
+    runs-on: ubuntu-latest # Use the latest Ubuntu environment for deployment
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/') 
+    # Conditional logic: Only run this job if the branch is 'main' or if the workflow is triggered by a tag
+
+    steps:
+      # Step 5: Deployment step
+      - name: Deploy to production
+        run: |
+          echo "Deploying application to production..." # Placeholder for deployment command
+          echo "Deployment complete!" # Placeholder for deployment success message
