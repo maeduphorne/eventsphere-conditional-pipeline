@@ -2,9 +2,9 @@ name: EventSphere CI/CD Pipeline with Conditional Logic
 
 on:
   push: # Run the workflow when changes are pushed to specific branches
-    # branches:
-    #   - main          # Trigger on pushes to the main branch
-    #   - feature/*     # Trigger on pushes to branches starting with 'feature/'
+    branches:
+      - main          # Trigger on pushes to the main branch
+      - feature/*     # Trigger on pushes to branches starting with 'feature/'
   pull_request: # Run the workflow when a pull request targets the main branch
     branches:
       - main
